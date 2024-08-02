@@ -114,7 +114,7 @@ const contacts = [
 
 export default function ContactList() {
   return (
-    <div className="ContactList">
+    <div className="ContactList w-full">
       <h2>Contacts</h2>
       {contacts.map((item, index) => (
         <ContactListItem key={index} contactData={item} />
