@@ -1,8 +1,15 @@
-// import { useState } from 'react';
+import ContactForm from './components/ContactForm';
+import ContactList from './components/ContactList';
+
 import './App.css';
 
 function App() {
-  return <></>;
+  return (
+    <>
+      <ContactForm />
+      <ContactList />
+    </>
+  );
 }
 
 export default App;
