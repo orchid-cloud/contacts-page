@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 
 export default function ContactListItem(props) {
-  // console.log({ contactData });
   return (
     <div className="ContactListItem relative flex gap-4 rounded bg-slate-300 p-2.5">
       <div className="flex min-w-14 items-center justify-center">
@@ -23,7 +22,7 @@ export default function ContactListItem(props) {
         <p className="text-sm text-gray-500 dark:text-gray-400">
           {props.contactData.fields.email.value}
         </p>
-        <div className="flex flex-wrap gap-2 pr-6">
+        <div className="flex flex-wrap gap-2">
           {props.contactData.tags.map((tag) => (
             <span
               className="rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700"
