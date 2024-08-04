@@ -8,13 +8,14 @@ const headers = () => {
   };
 };
 
-export const fetchContacts = async ({ queryKey }) => {
+export const fetchContacts = async ({ queryKey, signal }) => {
   const [, sort] = queryKey;
   const queryParams = new URLSearchParams(sort).toString();
   const url = `/api/v1/contacts?${queryParams}`;
 
   const response = await fetch(url, {
     headers: headers(),
+    signal,
   });
 
   if (!response.ok) {
@@ -37,4 +38,27 @@ export const fetchContact = async ({ queryKey }) => {
   }
 
   return response.json();
+};
+
+export const deleteContact = async (contactId) => {
+  const url = `/api/v1/contact/${contactId}`;
+
+  const response = await fetch(url, {
+    headers: headers(),
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("API request failed");
+  }
+
+  return response.json();
+};
+
+export const simulateApiFailure = async () => {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error("Simulated API failure after 2 seconds"));
+    }, 2000); // 2000 milliseconds = 2 seconds
+  });
 };
