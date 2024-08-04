@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
-// import { contacts } from "../data";
 import { fetchContacts } from "../api/contacts";
 import ContactListItem from "./ContactListItem";
 import { useQuery } from "@tanstack/react-query";
 
 export default function ContactList() {
   const { isPending, error, data, isFetching } = useQuery({
-    queryKey: ["contactsList"],
+    queryKey: ["contactsList", { sort: "created:desc" }],
     queryFn: fetchContacts,
   });
   console.log({ isPending, error, data, isFetching });

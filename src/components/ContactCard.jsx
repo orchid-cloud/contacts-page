@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { getContactFieldValue } from "../utils/contacts";
 
 export default function ContactCard(props) {
   return (
@@ -14,14 +15,14 @@ export default function ContactCard(props) {
         <div className="flex flex-col gap-1">
           <div className="flex flex-row gap-1">
             <span className="text-xl font-medium text-gray-900 dark:text-white">
-              {props.contact.fields.first_name.value}
+              {getContactFieldValue(props.contact.fields, "first name")}
             </span>
             <span className="text-xl font-medium text-gray-900 dark:text-white">
-              {props.contact.fields.last_name.value}
+              {getContactFieldValue(props.contact.fields, "last name")}
             </span>
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {props.contact.fields.email.value}
+            {getContactFieldValue(props.contact.fields, "email")}
           </p>
         </div>
       </div>
