@@ -8,10 +8,25 @@ const headers = () => {
   };
 };
 
-export const fetchContacts = async (_a, params = { sort: "created:desc" }) => {
-  const queryParams = new URLSearchParams(params).toString();
+export const fetchContacts = async ({ queryKey }) => {
+  const [, sort] = queryKey;
+  const queryParams = new URLSearchParams(sort).toString();
   const url = `/api/v1/contacts?${queryParams}`;
-  console.log({ queryParams, url });
+
+  const response = await fetch(url, {
+    headers: headers(),
+  });
+
+  if (!response.ok) {
+    throw new Error("API request failed");
+  }
+
+  return response.json();
+};
+
+export const fetchContact = async ({ queryKey }) => {
+  const [, contactId] = queryKey;
+  const url = `/api/v1/contact/${contactId}`;
 
   const response = await fetch(url, {
     headers: headers(),
