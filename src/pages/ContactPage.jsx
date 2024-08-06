@@ -17,7 +17,7 @@ export default function ContactPage() {
   const contact = data.resources[0];
 
   return (
-    <div className="mx-5 mt-16 flex flex-col gap-8 sm:mx-16 md:mx-20 md:flex-row md:items-start lg:mx-40 2xl:mx-auto 2xl:max-w-screen-xl">
+    <div className="mx-5 mt-16 flex flex-col gap-8 overflow-hidden sm:mx-16 md:mx-20 md:flex-row md:items-start lg:mx-40 2xl:mx-auto 2xl:max-w-screen-xl">
       <ContactCard contact={contact} />
     </div>
   );
