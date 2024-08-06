@@ -5,6 +5,7 @@ const headers = () => {
   return {
     Authorization: `Bearer ${token}`,
     "X-Requested-With": "XMLHttpRequest",
+    "Content-Type": "application/json",
   };
 };
 
@@ -46,6 +47,22 @@ export const deleteContact = async (contactId) => {
   const response = await fetch(url, {
     headers: headers(),
     method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("API request failed");
+  }
+
+  return response.json();
+};
+
+export const createContact = async (contactData) => {
+  const url = "/api/v1/contact";
+
+  const response = await fetch(url, {
+    headers: headers(),
+    method: "POST",
+    body: JSON.stringify(contactData),
   });
 
   if (!response.ok) {

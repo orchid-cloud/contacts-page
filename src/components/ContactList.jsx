@@ -33,10 +33,10 @@ const useDeleteContact = (queryKey) => {
   });
 };
 
-export default function ContactList() {
-  const queryKey = ["contactsList", { sort: "created:desc" }];
+export const queryKey = ["contactsList", { sort: "created:desc" }];
 
-  const { isPending, error, data, isFetching } = useQuery({
+export default function ContactList() {
+  const { isPending, error, data } = useQuery({
     queryKey,
     queryFn: fetchContacts,
   });
@@ -46,9 +46,6 @@ export default function ContactList() {
     deleteContactsListItem(contactId);
   };
 
-  console.log({ isPending, error, data, isFetching });
-  if (isPending) return "Loading...";
-
   if (error) return "An error has occurred: " + error.message;
 
   const contacts = data.resources;
@@ -56,8 +53,11 @@ export default function ContactList() {
     <div className="ContactList">
       <h2 className="mb-9 pt-6 text-3xl dark:text-slate-200">Contacts</h2>
 
+      {isPending ? (
+        <div className="dark:text-slate-200">Loading...</div>
+      ) : (
       <div className="flex flex-col gap-6 pb-5">
-        {contacts.map((contact) => (
+          {data.resources.map((contact) => (
           <div key={contact.id} className="relative">
             <Link to={`contacts/${contact.id}`}>
               <ContactListItem contactData={contact} />
@@ -73,6 +73,7 @@ export default function ContactList() {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }
