@@ -11,9 +11,7 @@ export default function ContactPage() {
     queryKey: queryKey(contactId),
     queryFn: fetchContact,
   });
-  console.log({ isPending, error, data, isFetching });
-
-  if (error) return "An error has occurred: " + error.message;
+  // console.log({ isPending, error, data, isFetching });
 
   return (
     <div className="mx-5 mt-16 flex flex-col gap-8 overflow-hidden sm:mx-16 md:mx-20 md:flex-row md:items-start lg:mx-40 2xl:mx-auto 2xl:max-w-screen-xl">

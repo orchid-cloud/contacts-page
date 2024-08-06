@@ -50,13 +50,15 @@ export default function ContactList() {
     deleteContactsListItem({ contactId, callback });
   };
 
-  if (error) return "An error has occurred: " + error.message;
-
   return (
     <div className="ContactList">
       <h2 className="mb-9 pt-6 text-3xl dark:text-slate-200">Contacts</h2>
 
-      {isPending ? (
+      {error ? (
+        <div className="flex flex-col gap-6 pb-5">
+          {"An error has occurred: " + error.message}
+        </div>
+      ) : isPending ? (
         <div className="dark:text-slate-200">Loading...</div>
       ) : (
         <div className="flex flex-col gap-6 pb-5">
