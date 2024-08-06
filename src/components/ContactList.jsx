@@ -2,16 +2,19 @@ import { Link } from "react-router-dom";
 import { deleteContact, fetchContacts } from "../api/contacts";
 import ContactListItem from "./ContactListItem";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import DeleteButton from "./DeleteButton";
 
 const useDeleteContact = (queryKey) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: deleteContact,
-    onMutate: async (contactId) => {
+    // @ts-ignore
+    onMutate: async ({ contactId, callback }) => {
       await queryClient.cancelQueries({ queryKey: [queryKey[0]] });
       const previousContacts = queryClient.getQueryData(queryKey);
 
+      callback();
       queryClient.setQueryData(queryKey, (old) => {
         // @ts-ignore
         const resources = old.resources.filter(
@@ -42,13 +45,13 @@ export default function ContactList() {
   });
   const { mutate: deleteContactsListItem } = useDeleteContact(queryKey);
 
-  const deleteItem = (contactId) => {
-    deleteContactsListItem(contactId);
+  const deleteItem = (contactId, callback) => {
+    // @ts-ignore
+    deleteContactsListItem({ contactId, callback });
   };
 
   if (error) return "An error has occurred: " + error.message;
 
-  const contacts = data.resources;
   return (
     <div className="ContactList">
       <h2 className="mb-9 pt-6 text-3xl dark:text-slate-200">Contacts</h2>
@@ -56,23 +59,18 @@ export default function ContactList() {
       {isPending ? (
         <div className="dark:text-slate-200">Loading...</div>
       ) : (
-      <div className="flex flex-col gap-6 pb-5">
+        <div className="flex flex-col gap-6 pb-5">
           {data.resources.map((contact) => (
-          <div key={contact.id} className="relative">
-            <Link to={`contacts/${contact.id}`}>
-              <ContactListItem contactData={contact} />
-            </Link>
-            <div
-              className="absolute right-2.5 top-1 cursor-pointer"
-              onMouseDown={() => deleteItem(contact.id)}
-            >
-              <span className="material-icons md-dark text text-lg hover:text-red-500 dark:text-slate-300 hover:dark:text-red-300">
-                delete
-              </span>
+            <div key={contact.id} className="relative">
+              <Link to={`contacts/${contact.id}`}>
+                <ContactListItem contactData={contact} />
+              </Link>
+              <DeleteButton
+                action={(callback) => deleteItem(contact.id, callback)}
+              />
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       )}
     </div>
   );

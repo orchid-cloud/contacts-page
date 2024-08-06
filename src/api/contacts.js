@@ -41,7 +41,7 @@ export const fetchContact = async ({ queryKey }) => {
   return response.json();
 };
 
-export const deleteContact = async (contactId) => {
+export const deleteContact = async ({contactId}) => {
   const url = `/api/v1/contact/${contactId}`;
 
   const response = await fetch(url, {
