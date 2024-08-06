@@ -79,3 +79,19 @@ export const simulateApiFailure = async () => {
     }, 2000); // 2000 milliseconds = 2 seconds
   });
 };
+
+export const addContactTag = async ({ contactId, tags }) => {
+  const url = `/api/v1/contacts/${contactId}/tags`;
+
+  const response = await fetch(url, {
+    headers: headers(),
+    method: "PUT",
+    body: JSON.stringify({ tags: tags }),
+  });
+
+  if (!response.ok) {
+    throw new Error("API request failed");
+  }
+
+  return response.json();
+};

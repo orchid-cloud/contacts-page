@@ -1,9 +1,68 @@
 import PropTypes from "prop-types";
 import { getContactFieldValue } from "../utils/contacts";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addContactTag } from "../api/contacts";
+import TextInput from "./forms/TextInput";
+import Submit from "./forms/Submit";
+import { queryKey } from "../pages/ContactPage";
+
+const useCreateTags = (queryKey) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: addContactTag,
+    onMutate: async ({ tags }) => {
+      await queryClient.cancelQueries({ queryKey: queryKey });
+      const previousContacts = queryClient.getQueryData(queryKey);
+
+      queryClient.setQueryData(queryKey, (old) => {
+        const details = {
+          // @ts-ignore
+          ...previousContacts.resources[0],
+          tags2: tags,
+        };
+        // @ts-ignore
+        return { ...old, resources: [details] };
+      });
+
+      return { previousContacts };
+    },
+    onError: (_err, _contactData, context) => {
+      queryClient.setQueryData(queryKey, context.previousContacts);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKey });
+    },
+  });
+};
 
 export default function ContactCard(props) {
+  const { mutate, isPending, isError } = useCreateTags(
+    queryKey(props.contact.id),
+  );
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+    const form = event.target;
+
+    const currentTags = props.contact.tags.map((tagItem) => tagItem.tag);
+
+    const newTags = form.tags.value.split(",").map((e) => e.trim());
+
+    const tags = Array.from(new Set(currentTags.concat(newTags)));
+
+    mutate(
+      { contactId: props.contact.id, tags },
+      {
+        onSuccess: () => {
+          form.reset();
+        },
+      },
+    );
+  };
+
   return (
-    <div className="ContactCard m-auto flex max-w-xl flex-col gap-9 p-2.5">
+    <div className="ContactCard m-auto flex min-w-[300px] max-w-xl grow flex-col gap-9 overflow-hidden p-2.5">
       <div className="flex gap-4">
         <div className="min-w-14">
           <img
@@ -13,7 +72,7 @@ export default function ContactCard(props) {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <div className="flex flex-row gap-1">
+          <div className="flex flex-row flex-wrap gap-1">
             <span className="text-xl font-medium text-gray-900 dark:text-white">
               {getContactFieldValue(props.contact.fields, "first name")}
             </span>
@@ -26,36 +85,38 @@ export default function ContactCard(props) {
           </p>
         </div>
       </div>
-      <div>
-        <h3 className="mb-3">Tags</h3>
-        <div className="flex flex-wrap gap-2">
-          {props.contact.tags.map((tag) => (
-            <span
-              className="rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700"
-              key={tag.id}
-            >
-              {tag.tag}
-            </span>
-          ))}
+      {props.contact.tags2.length > 0 && (
+        <div>
+          <h3 className="mb-3 dark:text-white">Tags</h3>
+          <div className="flex flex-wrap gap-2">
+            {props.contact.tags2.map((tag, index) => (
+              <span
+                className="rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700"
+                key={index}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <form>
+      <form onSubmit={onSubmit}>
         <div className="mb-4">
-          <input
-            className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
-            type="text"
-            name="first_name"
-            id="first_name"
-            placeholder="Add new tag"
+          <TextInput
+            name="tags"
+            placeholder="Add new tags"
+            isPending={isPending}
           />
         </div>
         <div className="mb-4">
-          <input
-            className="focus:shadow-outline w-full rounded bg-sky-400 px-4 py-2 font-bold text-white hover:bg-sky-600 focus:outline-none"
-            type="submit"
-            value="Add Tag"
-          />
+          <Submit value="Add Tag" isPending={isPending} />
+          <p
+            hidden={!isError}
+            className="text-center text-base italic text-red-500"
+          >
+            There was a server error. Please try later.
+          </p>
         </div>
       </form>
     </div>
@@ -64,16 +125,23 @@ export default function ContactCard(props) {
 
 ContactCard.propTypes = {
   contact: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     fields: PropTypes.shape({
-      first_name: PropTypes.shape({
-        value: PropTypes.string.isRequired,
-      }).isRequired,
-      last_name: PropTypes.shape({
-        value: PropTypes.string.isRequired,
-      }).isRequired,
-      email: PropTypes.shape({
-        value: PropTypes.string.isRequired,
-      }).isRequired,
+      "first name": PropTypes.arrayOf(
+        PropTypes.shape({
+          value: PropTypes.string.isRequired,
+        }),
+      ),
+      "last name": PropTypes.arrayOf(
+        PropTypes.shape({
+          value: PropTypes.string.isRequired,
+        }),
+      ),
+      email: PropTypes.arrayOf(
+        PropTypes.shape({
+          value: PropTypes.string.isRequired,
+        }).isRequired,
+      ),
     }).isRequired,
     avatar_url: PropTypes.string.isRequired,
     tags: PropTypes.arrayOf(
@@ -83,5 +151,6 @@ ContactCard.propTypes = {
         tag: PropTypes.string.isRequired,
       }),
     ),
+    tags2: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
 };
