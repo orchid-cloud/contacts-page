@@ -43,7 +43,6 @@ const useCreateContact = (queryKey) => {
 
 export default function ContactForm() {
   const { mutate, isPending, isError } = useCreateContact(queryKey);
-  console.log({ isPending, isError });
 
   const [formErrors, setFormErrors] = useState({});
 
@@ -109,8 +108,13 @@ export default function ContactForm() {
 
   return (
     <div className="ContactForm flex flex-col items-center">
-      <h2 className="mb-5 pt-6 text-3xl dark:text-slate-200">Create Contact</h2>
-      <div className="w-full max-w-xs">
+      <h2
+        id="contact-form-header"
+        className="mb-5 pt-6 text-3xl dark:text-slate-200"
+      >
+        Create Contact
+      </h2>
+      <div id="form" className="w-full max-w-xs">
         <form onSubmit={onSubmit}>
           <div className="mb-4">
             <label

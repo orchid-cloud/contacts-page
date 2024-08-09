@@ -22,5 +22,5 @@ TextInput.propTypes = {
   type: PropTypes.oneOf(["email", "text"]),
   isPending: PropTypes.bool,
   name: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
 };
