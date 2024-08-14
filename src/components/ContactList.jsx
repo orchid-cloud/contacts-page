@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
-import { deleteContact, fetchContacts } from "../api/contacts";
 import ContactListItem from "./ContactListItem";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import DeleteButton from "./DeleteButton";
+import { deleteAdapterContact, fetchAdapterContacts } from "../api/adapter";
 
 const useDeleteContact = (queryKey) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: deleteContact,
+    mutationFn: deleteAdapterContact,
     // @ts-ignore
     onMutate: async ({ contactId, callback }) => {
       await queryClient.cancelQueries({ queryKey: [queryKey[0]] });
@@ -41,7 +41,7 @@ export const queryKey = ["contactsList", { sort: "created:desc" }];
 export default function ContactList() {
   const { isPending, error, data } = useQuery({
     queryKey,
-    queryFn: fetchContacts,
+    queryFn: fetchAdapterContacts,
   });
   const { mutate: deleteContactsListItem } = useDeleteContact(queryKey);
 

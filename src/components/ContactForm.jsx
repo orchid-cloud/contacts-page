@@ -188,3 +188,21 @@ export default function ContactForm() {
     </div>
   );
 }
+
+// window.addEventListener("scroll", function () {
+//   const hideForm = document.getElementById("form");
+//   const formHeader = document.getElementById("contact-form-header");
+
+//   const scrollPosition = window.scrollY > 80;
+
+//   if (scrollPosition) {
+//     hideForm.style.display = "none";
+//     formHeader.style.display = "block";
+//     formHeader.style.position = "sticky";
+//     formHeader.style.top = "0";
+//     formHeader.style.backgroundColor = "#fff";
+//   } else {
+//     hideForm.style.display = "block";
+//     formHeader.style.display = "block";
+//   }
+// });
